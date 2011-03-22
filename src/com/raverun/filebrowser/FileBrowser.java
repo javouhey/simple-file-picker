@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2011 Gavin Bong
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Based on the file manager application by http://www.openintents.org/en/
+ */
 package com.raverun.filebrowser;
 
 import java.io.File;
@@ -24,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.raverun.filebrowser.model.Directory;
+import com.raverun.filebrowser.model.DirectoryTracker;
 import com.raverun.filebrowser.model.Entry;
 import com.raverun.filebrowser.model.ScanningException;
 import com.raverun.filebrowser.util.Constants;
@@ -36,12 +56,14 @@ import com.raverun.filebrowser.util.IOUtilities;
 public class FileBrowser extends ListActivity {
 
     String _sdcardPath = Constants.EMPTY;
-    File _currentDirectory = new File( Constants.EMPTY );
     FilesystemAdapter _listAdapter;
     DirectoryScanner _scanner;
 
+    private DirectoryTracker _tracker;
     private Handler _handler;
-    private int _stepsBack;
+
+//  File _currentDirectory = new File( Constants.EMPTY );
+//  private int _stepsBack;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -78,7 +100,7 @@ public class FileBrowser extends ListActivity {
             Log.d( LOG_TAG, "onCreate - _sdcardPath = " + _sdcardPath );
         }
 
-        _stepsBack = 0;
+//        _stepsBack = 0;
 
     // ---- Decide target directory  ----
         File targetDir = new File( Constants.DIR_ROOT );
@@ -94,17 +116,15 @@ public class FileBrowser extends ListActivity {
             }
         }
 
-    // Don't show the "folder empty" text since we're scanning.
-        _emptyText.setVisibility( View.GONE );
+        _tracker = DirectoryTracker.of( 0, targetDir );
 
-    // Also DON'T show the progress bar - it's kind of lame to show that
-    // for less than a second.
+        _emptyText.setVisibility( View.GONE );
         _progressBar.setVisibility( View.GONE );
 
     // ----- restore saved data -----
         if( savedInstanceState != null ) {
             targetDir = new File( savedInstanceState.getString( Constants.KEY_CURRENT_DIRECTORY ) );
-            _stepsBack = savedInstanceState.getInt( Constants.KEY_STEPBACK );
+            _tracker.deserializeFrom( savedInstanceState.getInt( Constants.KEY_STEPBACK ), targetDir );
             Log.d( LOG_TAG, "Restoring1 " + savedInstanceState.getString( Constants.KEY_CURRENT_DIRECTORY ) );
             Log.d( LOG_TAG, "Restoring2 " + savedInstanceState.getInt( Constants.KEY_STEPBACK ) );
         }
@@ -125,6 +145,7 @@ public class FileBrowser extends ListActivity {
     protected Dialog onCreateDialog( int id ) {
         switch( id ) {
         case DIALOG_PICK_FILE:
+            Log.d( LOG_TAG, "onCreateDialog - _dialogFileName=" + _dialogFileName );
             return new AlertDialog.Builder( FileBrowser.this )
                 .setIcon( R.drawable.alert_dialog_icon )
                 .setTitle( "Pick this file ?" )
@@ -155,16 +176,20 @@ public class FileBrowser extends ListActivity {
      */
     private final void openOrSelect( final File aFile ) {
         if( aFile.isDirectory() ) {
-            if( ! aFile.equals( _currentDirectory ) ) {
-//                mPreviousDirectory = _currentDirectory;
-                _currentDirectory = aFile;
-                rescan( aFile );
-            }
+            rescan( aFile );
+
+//-- just an optimization
+//            if( ! aFile.equals( _currentDirectory ) ) {
+//                _currentDirectory = aFile;
+//                rescan( aFile );
+//            }
         } else {
             final String fileSize = displayedFileSize( this, aFile );
             _dialogFileSize = fileSize;
             _dialogFile = aFile;
             _dialogFileName = aFile.getName();
+            Log.d( LOG_TAG, "selecting file " + _dialogFileName );
+            removeDialog( DIALOG_PICK_FILE ); // Caveat: if I don't do this, the dialog is cached
             showDialog( DIALOG_PICK_FILE );
 //            Toast.makeText( this, "File " + aFile.getName() + " is selected", Toast.LENGTH_LONG ).show();
         }
@@ -197,10 +222,22 @@ public class FileBrowser extends ListActivity {
     @Override
     protected void onSaveInstanceState( Bundle outState ) {
         super.onSaveInstanceState( outState );
-        Log.d( LOG_TAG, "Saving: _stepsBack=" + _stepsBack );
-        outState.putInt( Constants.KEY_STEPBACK, _stepsBack );
-        Log.d( LOG_TAG, "Saving: _currentDirectory=" + _currentDirectory.getAbsolutePath() );
-        outState.putString( Constants.KEY_CURRENT_DIRECTORY, _currentDirectory.getAbsolutePath() );
+        Log.d( LOG_TAG, "Saving: _stepsBack=" + _tracker.stepsBack() );
+        outState.putInt( Constants.KEY_STEPBACK, _tracker.stepsBack() );
+        Log.d( LOG_TAG, "Saving: _currentDirectory=" + _tracker.currentDirectory().getAbsolutePath() );
+        outState.putString( Constants.KEY_CURRENT_DIRECTORY, _tracker.currentDirectory().getAbsolutePath() );
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d( LOG_TAG, "onPause" );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d( LOG_TAG, "onResume" );
     }
 
     private class DirectoryScanner extends AsyncTask<File,Void,Void> {
@@ -241,8 +278,10 @@ public class FileBrowser extends ListActivity {
                 File[] files = _targetDirectory.listFiles();
                 if( files == null ) {
                     Log.d( LOG_TAG, "null return value from File#listFiles for -> " + _targetDirectory.getName() );
-                    if( _stepsBack > 0 )
-                        _stepsBack--;
+//                    if( _stepsBack > 0 )
+//                        _stepsBack--;
+
+                    _tracker.up(); // roll back
                     return null;
                 }
 
@@ -287,14 +326,16 @@ public class FileBrowser extends ListActivity {
     protected void onListItemClick( ListView l, View v, int position, long id ) {
         super.onListItemClick(l, v, position, id);
 
-        Log.d( LOG_TAG, "position = " + position + " | currentDirectory=" + _currentDirectory.getAbsolutePath() );
+        Log.d( LOG_TAG, "position = " + position + " | currentDirectory=" + _tracker.currentDirectory().getAbsolutePath() );
         Entry entry = (Entry)getListAdapter().getItem(position);
+        Log.d( LOG_TAG, "clicked on " + entry.name() );
 
-        File clicked = IOUtilities.getFile( _currentDirectory.getAbsolutePath(), entry.name() );
+        File clicked = IOUtilities.getFile( _tracker.currentDirectory().getAbsolutePath(), entry.name() );
         if( clicked != null ) {
             if( clicked.isDirectory() ) {
-                _stepsBack++;
-                Log.d( LOG_TAG, "Incremented _stepsBack to " + _stepsBack );
+                _tracker.down( clicked );
+//                _stepsBack++;
+//                Log.d( LOG_TAG, "Incremented _stepsBack to " + _stepsBack );
                 vibrate();
             }
             openOrSelect( clicked );
@@ -308,26 +349,35 @@ public class FileBrowser extends ListActivity {
 
     @Override
     public void onBackPressed() {
-        if( _stepsBack == 0 ) {
+        if( _tracker.stepsBack() == 0 ) {
+            Log.d( LOG_TAG, "default onBackPressed" );
+            super.onBackPressed();
+            return;
+        }
+
+        _tracker.up();
+        openOrSelect( _tracker.currentDirectory() );
+/*        if( _stepsBack == 0 ) {
             Log.d( LOG_TAG, "default onBackPressed" );
             super.onBackPressed();
             return;
         }
 
         if( _stepsBack > 0 )
-            upOneLevel();
+            upOneLevel();*/
     }
 
     /**
      * This function browses up one level
      * according to the field: {@code _currentDirectory}
      */
+    @SuppressWarnings("unused")
     private void upOneLevel(){
-        if( _stepsBack > 0 )
-            _stepsBack--;
-
-        if( _currentDirectory.getParent() != null )
-            openOrSelect( _currentDirectory.getParentFile());
+//        if( _stepsBack > 0 )
+//            _stepsBack--;
+//
+//        if( _currentDirectory.getParent() != null )
+//            openOrSelect( _currentDirectory.getParentFile());
     }
 
     private interface ExternalStorageStatus {

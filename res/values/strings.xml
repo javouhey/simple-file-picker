@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Main!</string>
-    <string name="app_name">browser</string>
+    <string name="hello">Pick a file</string>
+    <string name="app_name">Simple file picker</string>
     <string name="this_folder_is_empty">No files here</string>
 </resources>

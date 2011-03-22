@@ -7,6 +7,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/hello" />
+    <EditText 
+        android:text="" 
+        android:id="@+id/file_picked" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content">
+    </EditText>
     <Button
         android:id="@+id/browse"
         android:layout_marginLeft="1dip"
@@ -14,4 +20,5 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="browse" />
+
 </LinearLayout>
