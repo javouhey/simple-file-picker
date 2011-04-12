@@ -21,6 +21,7 @@ package com.raverun.filebrowser;
 
 import java.io.File;
 
+import com.raverun.filebrowser.util.Constants;
 import com.raverun.filebrowser.util.Either;
 import com.raverun.filebrowser.util.IOUtilities;
 
@@ -47,7 +48,8 @@ public class Main extends Activity {
         button = (Button)findViewById( R.id.browse );
         button.setOnClickListener( new OnClickListener() {
             public void onClick( View v ) {
-                Intent intent = new Intent( "com.raverun.action.PICK_FILE" );
+                Intent intent = new Intent( Constants.ACTION_PICK_FILE );
+                intent.putExtra( Intent.EXTRA_TITLE, "Select bookmarks file" );
                 startActivityForResult( intent, 2 );
             }
         } );

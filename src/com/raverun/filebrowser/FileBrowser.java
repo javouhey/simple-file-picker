@@ -88,6 +88,12 @@ public class FileBrowser extends ListActivity {
         getListView().requestFocus();
         getListView().requestFocusFromTouch();
 
+    // ----- initialize the title ------ 
+    // TODO retrieve title from Bundle?
+        final String title = getIntent().getStringExtra( Intent.EXTRA_TITLE );
+        if( title != null )
+            setTitle( title );
+
     // ----- initialize the external storage absolute path -----
         ExternalStorageStatus exstate = obtainStatus();
         if( !exstate.available() || !exstate.writable() ) {
