@@ -12,11 +12,9 @@ This software uses the following opensource artifacts:
 
 * Icons at http://cloudif.deviantart.com/art/Android-Developer-Icons-138072676
  
-* The class `Pair.java` from *Google Web Toolkit*
-  @see license http://code.google.com/intl/fr/webtoolkit/terms.html
+* The class `Pair.java` from [Google Web Toolkit](http://code.google.com/intl/fr/webtoolkit/terms.html "GWT license")
 
-* The code is a fork of *OpenIntent* filemanager  
-  @see http://www.openintents.org/en/
+* The code is based on [OpenIntent's filemanager](http://www.openintents.org/en/)
 
 
 # How to use 
