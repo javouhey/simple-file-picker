@@ -4,8 +4,8 @@
   android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:paddingLeft="8dip"
-  android:paddingRight="8dip">
+  android:paddingLeft="0dip"
+  android:paddingRight="0dip">
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -20,7 +20,7 @@
       android:layout_width="fill_parent"
       android:layout_height="0dip"
       android:layout_weight="1" >
-      <ListView 
+      <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

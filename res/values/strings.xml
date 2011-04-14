@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Pick a file</string>
+    <string name="readme">This is a demonstration of how to prompt the user to select a file that is residing on the sdcard.</string>
+    <string name="instruction">Pick a file</string>
     <string name="app_name">Simple file picker</string>
     <string name="this_folder_is_empty">No files here</string>
 </resources>

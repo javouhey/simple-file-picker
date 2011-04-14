@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomTitleBarText" parent="android:TextAppearance.WindowTitle">
+          <item name="android:textSize">20dip</item>
+          <item name="android:textColor">@color/blue</item>
+          <item name="android:textStyle">bold</item>
+          <item name="android:ellipsize">marquee</item>
+          <item name="android:gravity">center</item>
+     </style>
+     <!-- Changes the background color of the title bar -->
+     <style name="CustomTitleBarBackground">
+           <item name="android:background">@color/base03</item>
+           <item name="android:paddingLeft">8dip</item>
+     </style>
+     <!-- Set the theme for the window title -->
+     <!-- NOTE: setting android:textAppearence to style defined above -->
+     <style name="CustomTitleBar" parent="android:WindowTitle">
+          <item name="android:textAppearance">@style/CustomTitleBarText</item>
+          <item name="android:shadowDx">1</item>
+          <item name="android:shadowDy">0</item>
+          <item name="android:shadowRadius">1</item>
+          <item name="android:shadowColor">#6c71c4</item>
+      </style>
+      <!-- Override properties in the default theme -->
+      <!-- NOTE: you have to  explicitly the windowTitleSize property,the title bar will not re-size automatically -->
+      <style name="CustomTheme" parent="android:Theme">
+           <item name="android:windowTitleSize">40dip</item>
+           <item name="android:windowTitleStyle">@style/CustomTitleBar</item>
+           <item name="android:windowTitleBackgroundStyle">@style/CustomTitleBarBackground</item>
+      </style>
+
+     <style name="FileBrowserBackground">
+           <item name="android:background">@drawable/title_gradient</item>
+           <item name="android:paddingLeft">8dip</item>
+     </style>
+     <style name="FileBrowserTheme" parent="android:Theme">
+           <item name="android:windowTitleSize">40dip</item>
+           <item name="android:windowTitleStyle">@style/CustomTitleBar</item>
+           <item name="android:windowTitleBackgroundStyle">@style/FileBrowserBackground</item>
+     </style>
+
+</resources>

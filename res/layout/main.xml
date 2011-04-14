@@ -2,23 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="#002B36"
+    android:padding="8dip">
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
-    <EditText 
-        android:text="" 
+        android:text="@string/readme" 
+        android:paddingTop="20dip" 
+        android:paddingBottom="15dip"
+        android:textSize="18dip"
+        android:textColor="@color/yellow" />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/instruction" 
+        android:paddingBottom="5dip"
+        android:textSize="18dip" />
+    <EditText
+        android:text=""
         android:id="@+id/file_picked" 
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="browse sdcard"
+        android:textColor="@color/orange"
+        android:inputType="none">
     </EditText>
     <Button
         android:id="@+id/browse"
-        android:layout_marginLeft="1dip"
+        android:layout_marginLeft="0dip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="browse" />
+        android:layout_gravity="center_horizontal"
+        android:text="browse"
+        android:textSize="18dip" />
 
 </LinearLayout>

@@ -7,7 +7,7 @@
   <application android:name=".App" 
     android:icon="@drawable/icon" android:label="@string/app_name">
     <activity android:name=".Main"
-      android:label="@string/app_name">
+      android:label="@string/app_name" android:theme="@style/FileBrowserTheme">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -15,7 +15,7 @@
     </activity>
 
     <activity android:name=".FileBrowser"
-      android:label="Browser">
+      android:label="Browser" android:theme="@style/CustomTheme">
       <intent-filter>
         <action android:name="com.raverun.action.PICK_FILE"/>
         <category android:name="android.intent.category.DEFAULT" />

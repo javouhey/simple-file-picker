@@ -1,7 +1,7 @@
 # Summary
 
 This project provides an embeddable **sdcard** browser with the purpose
-of picking a file. It doesn't support directory picking. Currently the browser is rooted at `/sdcard` (i.e. user cannot browse to `/`)
+of picking a file. It doesn't support directory picking. Currently the browser is rooted at `/sdcard` (i.e. user cannot browse to `/`). See [screenshots](https://github.com/javouhey/simple-file-picker/wiki/Screenshots)
 
 __@last-updated:__ 2011 april 12th 15h15 GMT+8
 
@@ -16,6 +16,7 @@ This software uses the following opensource artifacts:
 
 * The code is based on [OpenIntent's filemanager](http://www.openintents.org/en/)
 
+* Color scheme [solarized](http://ethanschoonover.com/solarized)
 
 # How to use 
 
